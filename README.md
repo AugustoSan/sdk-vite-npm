@@ -19,12 +19,27 @@
         <!-- Aqui su codigo -->
         <script type="module">
             import {DicioBlockchain, DicioBlockchainAPI} from "{URL o ruta de archivo JS}";
-            const dicioBlockchainInstance = new DicioBlockchain({
+            
+            // Con Wallet ethereum
+            const instace = new DicioBlockchain({
               abiSmartContract: '', 
               addressSmartContract: '0x...', 
-              enviroment: 'prod'
+              enviroment: 'prod',
+              useType: 'frontend'
             });
-            const dicioBlockchainAPIInstance = new DicioBlockchainAPI({
+
+            // Con llave privada ethereum y nodo
+            const instace = new DicioBlockchain({
+              abiSmartContract: '', 
+              addressSmartContract: '0x...', 
+              enviroment: 'prod',
+              useType: 'frontend',
+              urlNode = '', 
+              privateKey = ''
+            });
+
+            // Mediante API
+            const apiInstance = new DicioBlockchainAPI({
               baseURL: '', 
               port: '', 
               raiz: ''
@@ -38,16 +53,29 @@
   ```javascript
     import { DicioBlockchain, DicioBlockchainAPI } from 'sdk-vite-npm';
 
+    // Con Wallet ethereum
     const instace = new DicioBlockchain({
-        abiSmartContract: '',
-        addressSmartContract: '0x...',
-        enviroment: 'prod'
+      abiSmartContract: '', 
+      addressSmartContract: '0x...', 
+      enviroment: 'prod',
+      useType: 'frontend'
     });
 
+    // Con llave privada ethereum y nodo
+    const instace = new DicioBlockchain({
+      abiSmartContract: '', 
+      addressSmartContract: '0x...', 
+      enviroment: 'prod',
+      useType: 'frontend',
+      urlNode = '', 
+      privateKey = ''
+    });
+
+    // Mediante API
     const apiInstance = new DicioBlockchainAPI({
-        baseURL: '', 
-        port: '', 
-        raiz: ''
+      baseURL: '', 
+      port: '', 
+      raiz: ''
     });
   ```
   ## Uso  
@@ -80,11 +108,13 @@
     });
 ```
 ## Nota ✨  
-  Para usarlo en backend debe agregar la variable *useType*
+  Para usarlo en backend debe agregar las variables *urlNode*, *privateKey* y cambiar *useType*.
+  Para ambientes *dev* y *test* aun no tiene habilitado nada, es una libreria de prueba.
 
-
+  Por ejemplo: 
+  
   ```javascript
-const dicioBlockchainInstance = new DicioBlockchain({
+const instace = new DicioBlockchain({
     abiSmartContract: '', 
     addressSmartContract: '0x...', 
     enviroment: 'prod',
@@ -94,7 +124,7 @@ const dicioBlockchainInstance = new DicioBlockchain({
 });
     
 ```
-tipos aceptables
+Tipos aceptables
   ```javascript
 enviroment: 'prod' | 'dev' | 'test';
 useType: 'frontend' | 'backend';
