@@ -1,5 +1,13 @@
 {
   "name": "sdk-vite-npm",
+  "description": "Libreria para el manejo de smartcontracts en la blockchain",
+  "author": {
+    "name": "Augusto Sanchez",
+    "email": "augustosanchez103@gmail.com"
+  },
+  "repository": {
+    "url": "https://github.com/AugustoSan/sdk-vite-npm.git"
+  },
   "version": "0.0.16",
   "type": "module",
   "files": [
