@@ -1,11 +1,11 @@
 import { ethers } from 'ethers';
 import { ISmartContract } from './interfaces/Blockchain.interface';
-import { IInteraccionContract } from './interfaces/Information.interface';
+import { IInteractionContract } from './interfaces/Information.interface';
 import { ContractRead } from './services/ContractRead';
 import { ContractWrite } from './services/ContractWrite';
 
 interface IDataProps {
-    abiSmartContract: string;
+    abiSmartContract: ethers.Interface | ethers.InterfaceAbi;
     addressSmartContract: string;
     enviroment: string;
 }
@@ -24,10 +24,10 @@ export class DicioBlockchain {
         }
         this.enviroment = enviroment;
     }
-    contractRead = async({functionName, params}: IInteraccionContract): Promise<ethers.Result | Error> => {
+    contractRead = async({functionName, params}: IInteractionContract): Promise<ethers.Result | Error> => {
         return ContractRead({functionName, parameters: params, smartContract: this.contract});
     }
-    contractWrite = async({functionName, params}: IInteraccionContract): Promise<ethers.TransactionReceipt | Error> => {
+    contractWrite = async({functionName, params}: IInteractionContract): Promise<ethers.TransactionReceipt | Error> => {
         return ContractWrite({functionName, parameters: params, smartContract: this.contract});
     }
 }

@@ -1,8 +1,7 @@
-import { Result, ethers } from 'ethers';
+import { Result, ethers, BrowserProvider } from 'ethers';
 
 import { ISmartContract } from '../interfaces/Blockchain.interface';
 import { getError } from '../utils/Errors.util';
-import { BrowserProvider } from 'ethers';
 
 interface IDataProps {
   smartContract: ISmartContract;
@@ -37,7 +36,7 @@ export const ContractRead = async ({
         );
       }
   } catch (error: any) {
-    throw getError(error);
+    return getError(error);
   } finally {
   }
 };

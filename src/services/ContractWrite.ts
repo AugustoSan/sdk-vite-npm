@@ -1,7 +1,6 @@
-import { TransactionReceipt, ethers } from 'ethers';
+import { TransactionReceipt, ethers, BrowserProvider } from 'ethers';
 import { ISmartContract } from '../interfaces/Blockchain.interface';
 import { getError } from '../utils/Errors.util';
-import { BrowserProvider } from 'ethers';
 
 interface IDataProps {
   smartContract: ISmartContract;
@@ -33,14 +32,14 @@ export const ContractWrite = async ({
       const tx = await contract[functionName](...parameters);
       response = await tx?.wait(1);
       if(response.status == 1) return response;
-      else throw response;
+      else return response;
     } else {
       return new Error(
         `La función "${functionName} no existe en el contrato"`
         );
     }
   } catch (error: any) {
-    throw getError(error);
+    return getError(error);
   } finally {
   }
 };

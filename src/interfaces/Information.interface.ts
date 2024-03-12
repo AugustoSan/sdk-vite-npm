@@ -1,4 +1,4 @@
-export interface IInteraccionContract {
+export interface IInteractionContract {
     functionName: string;
     params: Array<any>;
 }
