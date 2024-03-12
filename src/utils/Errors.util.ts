@@ -129,20 +129,4 @@ export const getError = (error: any): Error => {
       default: 
         return error;
     }
-    if (isError(error, 'UNKNOWN_ERROR') || isError(error, 'NOT_IMPLEMENTED') || isError(error, 'UNSUPPORTED_OPERATION')
-    || isError(error, 'NETWORK_ERROR') || isError(error, 'SERVER_ERROR') || isError(error, 'TIMEOUT')
-    || isError(error, 'BAD_DATA') || isError(error, 'CANCELLED') || isError(error, 'BUFFER_OVERRUN')
-    || isError(error, 'NUMERIC_FAULT') || isError(error, 'INVALID_ARGUMENT') || isError(error, 'MISSING_ARGUMENT')
-    || isError(error, 'UNEXPECTED_ARGUMENT') || isError(error, 'VALUE_MISMATCH') || isError(error, 'CALL_EXCEPTION')
-    || isError(error, 'INSUFFICIENT_FUNDS') || isError(error, 'NONCE_EXPIRED') || isError(error, 'REPLACEMENT_UNDERPRICED')
-    || isError(error, 'TRANSACTION_REPLACED') || isError(error, 'UNCONFIGURED_NAME') || isError(error, 'OFFCHAIN_FAULT')
-    || isError(error, 'ACTION_REJECTED')
-  ) {
-        if( error.info !== undefined){
-            console.log('data: ', error.info.error.data);
-            return new Error(error.info.error.data.reason);
-        }
-        return new Error(error.message ?? error.shortMessage)
-    }
-    return error;
 }

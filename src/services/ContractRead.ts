@@ -1,4 +1,4 @@
-import { Result, ethers, BrowserProvider } from 'ethers';
+import { Result, ethers } from 'ethers';
 
 import { ISmartContract } from '../interfaces/Blockchain.interface';
 import { getError } from '../utils/Errors.util';
@@ -7,20 +7,17 @@ interface IDataProps {
   smartContract: ISmartContract;
   functionName: string;
   parameters: any[];
+  signer: ethers.ContractRunner;
 }
 
 export const ContractRead = async ({
   functionName,
   parameters,
-  smartContract
+  smartContract,
+  signer,
 }: IDataProps): Promise<Result | Error> => {
   try {
     console.log('Entro en ContractRead');
-    if(window.ethereum === null || window.ethereum === undefined){
-      return new Error(`MetaMask u otro proveedor de Ethereum no detectado.`);
-    }
-    const provider = new BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
     const contract = new ethers.Contract(
       smartContract.address,
       smartContract.abi,
