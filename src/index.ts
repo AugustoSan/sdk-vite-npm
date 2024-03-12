@@ -1,25 +1,25 @@
-import { BrowserProvider, ethers } from 'ethers';
+import { BrowserProvider, JsonRpcProvider, ethers } from 'ethers';
 import { ISmartContract } from './interfaces/Blockchain.interface';
-import { IInteractionAPIGET, IInteractionAPIPOST, IInteractionContract } from './interfaces/Information.interface';
+import { IDataPropsAPI, IInteractionAPIGET, IInteractionAPIPOST, IInteractionContract } from './interfaces/Information.interface';
 import { ContractRead } from './services/ContractRead';
 import { ContractWrite } from './services/ContractWrite';
-
-interface IDataProps {
+interface IDataPropsDicioBlockchain {
     abiSmartContract: ethers.Interface | ethers.InterfaceAbi;
     addressSmartContract: string;
     enviroment: 'prod' | 'dev' | 'test';
     useType: 'frontend' | 'backend';
+    urlNode?: string | null;
+    privateKey?: string | null;
 }
 
 export class DicioBlockchain {
     private contract: ISmartContract;
     private useType: 'frontend' | 'backend';
+    private privateKey: string | null;
+    private urlNode: string | null;
     enviroment: 'prod' | 'dev' | 'test';
-    private APIBaseURL = import.meta.env.API_BASE_URL ?? 'http://122.8.178.167';
-    private APIPort = import.meta.env.API_PORT ?? '5116';
-    private APIRaiz = import.meta.env.API_RAIZ ?? 'api/Attestation';
     
-    constructor({abiSmartContract, addressSmartContract, enviroment, useType = 'frontend'}: IDataProps) {
+    constructor({abiSmartContract, addressSmartContract, enviroment, useType = 'frontend', urlNode = null, privateKey = null}: IDataPropsDicioBlockchain) {
         if(ethers.ZeroAddress === addressSmartContract || !ethers.isAddress(addressSmartContract)){
             throw Error(`La direccion del smart contract no es correcta o es la direccion cero: ${addressSmartContract}`);
         }
@@ -29,6 +29,8 @@ export class DicioBlockchain {
         }
         this.enviroment = enviroment;
         this.useType = useType;
+        this.privateKey = privateKey;
+        this.urlNode = urlNode;
     }
     private getSigner = async(): Promise<ethers.ContractRunner | Error> => {
         if(this.useType === 'frontend'){
@@ -39,15 +41,14 @@ export class DicioBlockchain {
             return await provider.getSigner();
         }
         else {
-            if(import.meta.env.URL_NODE === null || import.meta.env.URL_NODE === undefined){
-                return new Error(`No se encuentra la variable URL_NODE.`);
+            if(this.urlNode === null || this.urlNode === undefined){
+                return new Error(`La variable urlNode se encuentra vacia.`);
             }
-            if(import.meta.env.PRIVATE_KEY === null || import.meta.env.PRIVATE_KEY === undefined){
-              return new Error(`No se encuentra la variable PRIVATE_KEY.`);
+            if(this.privateKey === null || this.privateKey === undefined){
+              return new Error(`La variable privateKey se encuentra vacia.`);
             }
-            const provider = import.meta.env.URL_NODE ?? '';
-            const privateKey = import.meta.env.PRIVATE_KEY ?? '';
-            return new ethers.Wallet(privateKey, provider);
+            const provider = new JsonRpcProvider(this.urlNode);
+            return new ethers.Wallet(this.privateKey, provider);
         }
     }
     contractRead = async({functionName, params}: IInteractionContract): Promise<ethers.Result | Error> => {
@@ -75,9 +76,23 @@ export class DicioBlockchain {
             return Error('Ocurrio un error ');
         }
     }
+}
+
+
+export class DicioBlockchainAPI {
+    private baseURL: string;
+    private port: string;
+    private raiz: string;
+    
+    constructor({baseURL, port, raiz}: IDataPropsAPI) {
+        this.baseURL = baseURL;
+        this.port = port;
+        this.raiz = raiz;
+    }
 
     contractReadAPI = async({endpoint, token}: IInteractionAPIGET): Promise<Response> => {
-        return fetch(`${this.APIBaseURL}:${this.APIPort}/${this.APIRaiz}/${endpoint}`, {
+        console.log('DicioBlockchainAPI > contractReadAPI');
+        return fetch(`${this.baseURL}:${this.port}/${this.raiz}/${endpoint}`, {
             method: 'GET',
             headers: {
                 "Content-Type": "application/json",
@@ -89,7 +104,8 @@ export class DicioBlockchain {
     }
 
     contractWriteAPI = async({endpoint, token, data}: IInteractionAPIPOST): Promise<Response> => {
-        return fetch(`${this.APIBaseURL}:${this.APIPort}/${this.APIRaiz}/${endpoint}`, {
+        console.log('DicioBlockchainAPI > contractWriteAPI');
+        return fetch(`${this.baseURL}:${this.port}/${this.raiz}/${endpoint}`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",

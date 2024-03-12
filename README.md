@@ -18,8 +18,17 @@
       <body>
         <!-- Aqui su codigo -->
         <script type="module">
-            import {DicioBlockchain} from "{URL o ruta de archivo JS}";
-            const instace = new DicioBlockchain({abiSmartContract: '', addressSmartContract: '0x...', enviroment: 'PROD'});
+            import {DicioBlockchain, DicioBlockchainAPI} from "{URL o ruta de archivo JS}";
+            const dicioBlockchainInstance = new DicioBlockchain({
+              abiSmartContract: '', 
+              addressSmartContract: '0x...', 
+              enviroment: 'prod'
+            });
+            const dicioBlockchainAPIInstance = new DicioBlockchainAPI({
+              baseURL: '', 
+              port: '', 
+              raiz: ''
+            });
         </script>
       </body>
   </html>
@@ -27,19 +36,25 @@
 
   ### NodeJS, ReactJS, Angular
   ```javascript
-    import { DicioBlockchain } from 'sdk-vite-npm';
+    import { DicioBlockchain, DicioBlockchainAPI } from 'sdk-vite-npm';
 
     const instace = new DicioBlockchain({
         abiSmartContract: '',
         addressSmartContract: '0x...',
-        enviroment: 'PROD'
+        enviroment: 'prod'
+    });
+
+    const apiInstance = new DicioBlockchainAPI({
+        baseURL: '', 
+        port: '', 
+        raiz: ''
     });
   ```
   ## Uso  
 
   ```javascript
  
-    // Para leer del smart contract
+    // Con wallet ethereum o llave privada
     const response = await instace.contractRead({
         functionName,
         params
@@ -50,9 +65,43 @@
         functionName,
         params
     });
+
+    // Sin wallet ethereum o llave privada
+    const response = await apiInstance.contractReadAPI({
+        endpoint: '',
+        token: ''
+    });
+
+    // Para realizar transacciones en el smartcontract
+    const response = await apiInstance.contractWriteAPI({
+        endpoint: '',
+        token: '',
+        data
+    });
 ```
 ## Nota ✨  
-  Por el momento solo se puede usar con una instancia de window.ethereum y no se tiene un CDN para la libreria
+  Para usarlo en backend debe agregar la variable *useType*
+
+
+  ```javascript
+const dicioBlockchainInstance = new DicioBlockchain({
+    abiSmartContract: '', 
+    addressSmartContract: '0x...', 
+    enviroment: 'prod',
+    useType: 'backend',
+    urlNode = '', 
+    privateKey = ''
+});
+    
+```
+tipos aceptables
+  ```javascript
+enviroment: 'prod' | 'dev' | 'test';
+useType: 'frontend' | 'backend';
+    
+```
+
+
 
 ## Dependencias
   [ethers js](https://docs.ethers.org/v6/getting-started/)

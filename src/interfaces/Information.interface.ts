@@ -13,3 +13,9 @@ export interface IInteractionAPIPOST {
     token: string;
     data: any;
 }
+
+export interface IDataPropsAPI {
+    baseURL: string;
+    port: string;
+    raiz: string
+}
