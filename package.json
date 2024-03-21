@@ -8,7 +8,7 @@
   "repository": {
     "url": "https://github.com/AugustoSan/sdk-vite-npm.git"
   },
-  "version": "0.0.20",
+  "version": "0.0.21",
   "type": "module",
   "files": [
     "dist/*",
@@ -35,6 +35,7 @@
     "vite": "^5.1.6"
   },
   "dependencies": {
+    "bignumber.js": "^9.1.2",
     "ethers": "^6.11.1"
   }
 }

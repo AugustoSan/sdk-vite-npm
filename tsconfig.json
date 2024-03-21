@@ -23,7 +23,8 @@
     /* Emit */
     "declaration": true,
     "paths": {
-      "ethers": ["./node_modules/ethers"]
+      "ethers": ["./node_modules/ethers"],
+      "bignumber": ["./node_modules/bignumber.js"]
     }
   },
   "include": ["src", "types"]
