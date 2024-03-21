@@ -27,5 +27,6 @@
       "bignumber": ["./node_modules/bignumber.js"]
     }
   },
-  "include": ["src", "types"]
+  "include": ["src", "types"],
+  "exclude": ["public"]
 }

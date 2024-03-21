@@ -8,6 +8,48 @@
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/index.ts"></script>
+    <script src="Attestation.js"></script>
+    <script type="module">
+      import {
+        DicioBlockchain, DicioBlockchainAPI, ContractRead, ContractWrite, dateToUint, uintToDate, getError, getAddress, parseToBigInt,
+        tokensToNumber, numberToTokens, GweiToTokens, validate, validateAddressETH,
+      } from "/src/index.ts";
+
+      // import type {
+      //   IBlockchainResponse, ISmartContract, IDataResponseRead, IDataResponseWrite,
+      //   IInteractionContract, IInteractionAPIGET, IInteractionAPIPOST, IDataPropsAPI,
+      //   ISecret 
+      // } from "/src/index.ts";
+
+      const dicioBlockchainInstance = new DicioBlockchain({abiSmartContract: AtetstationContract.abi, addressSmartContract: AtetstationContract.address, enviroment: 'prod'});
+      const dicioBlockchainAPIInstance = new DicioBlockchainAPI({baseURL: 'http://122.8.178.167', port: '5116', raiz: 'api/Attestation'});
+
+      const temp = await dicioBlockchainInstance.contractRead({functionName: 'attestationsCount', params: []});
+      const attestationsCount = Number(temp.toString());
+      console.log('attestationsCount: ', attestationsCount);
+      for (let i = 1; i <= attestationsCount; i++) {
+        const element = await dicioBlockchainInstance.contractRead({functionName: 'getAttestationsByIndex', params: [i]});
+        // console.log('element: ', element);
+        const {id, evidence, timeStamp, createDate, status} = element;
+        console.log('element: ', element);
+        console.log('createDate: ', createDate);
+        console.log('createDate: ', createDate);
+        console.log('uintToDate: ', uintToDate(createDate));
+        const numberTokens = tokensToNumber(createDate, 18);
+        console.log('createDate: ', createDate, 'numberTokens: ', numberTokens);
+        const tokensNumber = numberToTokens(numberTokens, 18);
+        console.log('createDate: ', createDate, 'tokensNumber: ', tokensNumber);
+
+        const gweiTokens = GweiToTokens(numberTokens, 18);
+        console.log('createDate: ', createDate, 'gweiTokens: ', gweiTokens);
+
+        const newTokens = tokensToNumber(tokensNumber, 18);
+        console.log('createDate: ', createDate, 'newTokens: ', newTokens);
+
+        console.log('createDate: ', createDate, 'number: ', tokensToNumber(createDate, 18), 'tokens: ', numberToTokens(numberTokens, 18), 'inversa: ', parseToBigInt(numberToTokens(tokensToNumber(createDate, 18), 18)));
+        console.log(createDate === parseToBigInt(numberToTokens(tokensToNumber(createDate, 18), 18)));
+        // console.log('uintToDate: ', uintToDate(createDate));
+      }
+    </script>
   </body>
 </html>

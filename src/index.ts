@@ -121,12 +121,12 @@ export class DicioBlockchainAPI {
 export { ContractRead, ContractWrite } from './services';
 export { 
     dateToUint, uintToDate, getError, getAddress, 
-    tokensToNumber, numberToTokens, 
+    tokensToNumber, numberToTokens,  parseToBigInt,
     GweiToTokens, validate, validateAddressETH 
 } from "./utils";
 
-export { 
-    type IBlockchainResponse,  type ISmartContract, type IDataResponseRead, type IDataResponseWrite, 
-    type IInteractionContract, type IInteractionAPIGET, type IInteractionAPIPOST, type IDataPropsAPI,
-    type ISecret 
+export type { 
+    IBlockchainResponse, ISmartContract, IDataResponseRead, IDataResponseWrite, 
+    IInteractionContract, IInteractionAPIGET, IInteractionAPIPOST, IDataPropsAPI,
+    ISecret 
 } from "./interfaces";
