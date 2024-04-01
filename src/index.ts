@@ -118,11 +118,6 @@ export class DicioBlockchainAPI {
     }
 }
 
-export type { 
-    IBlockchainResponse,  ISmartContract, IDataResponseRead, IDataResponseWrite, 
-    IInteractionContract, IInteractionAPIGET, IInteractionAPIPOST, IDataPropsAPI, ISecret 
-} from "./interfaces";
-
 export { ContractRead, ContractWrite } from "./services";
 
 export { 

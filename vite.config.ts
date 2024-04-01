@@ -13,11 +13,7 @@ export default defineConfig({
     build: {
         // También podría ser un diccionario o un array de múltiples puntos de entrada
         lib: {
-            entry: {
-                'sdk-vite-npm': resolve(__dirname, 'src/index.ts'),
-                'services': resolve(__dirname, 'src/services/index.ts'),
-                'utils': resolve(__dirname, 'src/utils/index.ts'),
-            },
+            entry: resolve(__dirname, 'src/index.ts'),
             name: 'SDKViteNPM',
             // Se agregará la extension apropiada.
             // fileName: 'sdk-vite-npm',
