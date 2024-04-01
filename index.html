@@ -5,51 +5,775 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + TS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   </head>
   <body>
-    <div id="app"></div>
-    <script src="Attestation.js"></script>
-    <script type="module">
-      import {
-        DicioBlockchain, DicioBlockchainAPI, ContractRead, ContractWrite, dateToUint, uintToDate, getError, getAddress, parseToBigInt,
-        tokensToNumber, numberToTokens, GweiToTokens, validate, validateAddressETH,
-      } from "/src/index.ts";
+    <div id="app">
+      <button id="btn-view-attestations" type="button" class="btn btn-primary m-3">Ver attestaciones</button>
+      <button id="btn-connect-metamask" type="button" class="btn btn-primary m-3">Connectarse con metamask</button>
+      <div id="find-attestation-by-address" class="card m-3 p-2">
+        <div class="card-body">
+          <h5 class="card-title">Buscar attestación por address</h5>
+          <div class="row g-3">
 
-      // import type {
-      //   IBlockchainResponse, ISmartContract, IDataResponseRead, IDataResponseWrite,
-      //   IInteractionContract, IInteractionAPIGET, IInteractionAPIPOST, IDataPropsAPI,
-      //   ISecret 
-      // } from "/src/index.ts";
+            <div class="col-12">
+              <label for="inputAddress" class="form-label">Address</label>
+              <input id="input-find-attestation-by-address" type="text" class="form-control" id="inputAddress" placeholder="0xFDE88e5dc9FE97458e66E4165d4886bDA0fEfe0b">
+            </div>
+            <div class="col-12">
+              <button id="btn-find-attestation-by-address" type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <div id="add-attestation" class="card m-3 p-2">
+        <div class="card-body">
+          <h5 class="card-title">Agregar nueva attestación</h5>
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="inputAddress" class="form-label">Address</label>
+              <input id="input-add-attestation-address" type="text" class="form-control" placeholder="0xFDE88e5dc9FE97458e66E4165d4886bDA0fEfe0b">
+            </div>
+            <div class="col-md-6">
+              <label for="input-add-attestation-id" class="form-label">ID</label>
+              <input id="input-add-attestation-id" type="text" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label for="input-add-attestation-status" class="form-label">Estatus</label>
+              <input id="input-add-attestation-status" type="text" class="form-control" placeholder="0">
+            </div>
+            <div class="col-12">
+              <label for="textarea-add-attestation-value" class="form-label">Value</label>
+              <textarea id="textarea-add-attestation-value" type="text" class="form-control" placeholder="Agregar el value que tendra la attestación"></textarea>
+            </div>
+            <div class="col-12">
+              <button id="btn-add-attestation" type="submit" class="btn btn-primary">Agregar</button>
+            </div>
+          </div>  
+        </div>
+      </div>
+
+      <div id="transactions-attestations" class="card m-3 p-2">
+        <div class="card-body">
+          <h5 class="card-title">Transacción data</h5>
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="input-transaction-attestation-block-hash" class="form-label">BlockHash</label>
+              <input id="input-transaction-attestation-block-hash" type="text" class="form-control" disabled>
+            </div>
+            <div class="col-md-12">
+              <label for="input-transaction-attestation-block-number" class="form-label">Block number</label>
+              <input id="input-transaction-attestation-block-number" type="text" class="form-control" disabled>
+            </div>
+            <div class="col-md-6">
+              <label for="input-transaction-attestation-gas-price" class="form-label">Gas price</label>
+              <input id="input-transaction-attestation-gas-price" type="text" class="form-control" disabled>
+            </div>
+            <div class="col-md-6">
+              <label for="input-transaction-attestation-gas-used" class="form-label">Gas used</label>
+              <input id="input-transaction-attestation-gas-used" type="text" class="form-control" disabled>
+            </div>
+            <div class="col-md-12">
+              <label for="input-transaction-attestation-hash" class="form-label">Hash</label>
+              <input id="input-transaction-attestation-hash" type="text" class="form-control" disabled>
+            </div>
+            <div class="col-md-12">
+              <label for="input-transaction-attestation-from" class="form-label">From</label>
+              <input id="input-transaction-attestation-from" type="text" class="form-control" disabled>
+            </div>
+            <div class="col-md-12">
+              <label for="input-transaction-attestation-to" class="form-label">To</label>
+              <input id="input-transaction-attestation-to" type="text" class="form-control" disabled>
+            </div>
+          </div>  
+        </div>
+      </div>
+      <div class="m-3">
+        <table class="table table-striped-columns" id="table-list-attestations">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Evidence</th>
+              <th scope="col">timestamp</th>
+              <th scope="col">blockchainCreate</th>
+              <th scope="col">status</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script>
+      const abiAtetstation = [
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "attestor",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "admin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "status",
+              "type": "bool"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "datetime",
+              "type": "uint256"
+            }
+          ],
+          "name": "AttestorChange",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "index",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "value",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "status",
+              "type": "uint8"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "createDate",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewAttestation",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_userEth",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "_id",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "_value",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_timeStamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "addAttestation",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_attestor",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "_id",
+              "type": "string"
+            }
+          ],
+          "name": "addAttestor",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "attestationsCount",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "attestorByAddress",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "active",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "countAttestors",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_indexAttestation",
+              "type": "uint256"
+            }
+          ],
+          "name": "getAttestationsByIndex",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "id",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "evidence",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timeStamp",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "createDate",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "status",
+                  "type": "uint8"
+                }
+              ],
+              "internalType": "struct DicioAttestation.Attest",
+              "name": "",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_userEth",
+              "type": "address"
+            }
+          ],
+          "name": "getAttestationsByUser",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_account",
+              "type": "address"
+            }
+          ],
+          "name": "getAttestors",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "id",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "active",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct DicioAttestation.Attestor",
+              "name": "",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_attestor",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "_status",
+              "type": "bool"
+            }
+          ],
+          "name": "updateAttestor",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ];
+
+      const AtetstationContract = {
+        address: '0x39E8059a0b3Eb52C9320161d80F7141e82A87077', // Agregar por variable de entorno o de manera estatica
+        abi: abiAtetstation
+      }
+      
+
+      let withMetamask = false;
+
+      const borrarBodyTabla = () => {
+          // Obtén una referencia a la tabla de cuerpo
+          const cuerpoTabla = document.getElementById('table-list-attestations').getElementsByTagName('tbody')[0];
+
+          // Elimina todas las filas del cuerpo de la tabla
+          while (cuerpoTabla.firstChild) {
+            cuerpoTabla.removeChild(cuerpoTabla.firstChild);
+          }
+
+      }
+
+      const insertarFila = (id, evidence, timeStamp, createDate, status) => {
+          // Obtén una referencia a la tabla
+          const tabla = document.getElementById('table-list-attestations').getElementsByTagName('tbody')[0];
+          
+          // Crear una nueva fila y celdas
+          const fila = tabla.insertRow();
+
+          // Insertar celdas en la fila
+          const celda1 = fila.insertCell(0);
+          const celda2 = fila.insertCell(1);
+          const celda3 = fila.insertCell(2);
+          const celda4 = fila.insertCell(3);
+          const celda5 = fila.insertCell(4);
+
+          // Agregar contenido a las celdas
+          celda1.textContent = id;
+          celda2.textContent = evidence;
+          celda3.textContent = timeStamp;
+          celda4.textContent = createDate;
+          celda5.textContent = status;
+      }
+
+      const borrarDatosTransaction = () => {
+          document.getElementById('input-transaction-attestation-block-hash').value = '';
+          document.getElementById('input-transaction-attestation-block-number').value = '';
+          document.getElementById('input-transaction-attestation-gas-price').value = '';
+          document.getElementById('input-transaction-attestation-gas-used').value = '';
+          document.getElementById('input-transaction-attestation-hash').value = '';
+          document.getElementById('input-transaction-attestation-from').value = '';
+          document.getElementById('input-transaction-attestation-to').value = '';
+      }
+
+      const agregarDatosTx = (blockHash = '', blockNumber = '', gasPrice = '', gasUsed = '', hash = '', from = '', to = '') => {
+          document.getElementById('input-transaction-attestation-block-hash').value = blockHash;
+          document.getElementById('input-transaction-attestation-block-number').value = blockNumber;
+          document.getElementById('input-transaction-attestation-gas-price').value = gasPrice;
+          document.getElementById('input-transaction-attestation-gas-used').value = gasUsed;
+          document.getElementById('input-transaction-attestation-hash').value = hash;
+          document.getElementById('input-transaction-attestation-from').value = from;
+          document.getElementById('input-transaction-attestation-to').value = to;
+      }
+
+
+      const shortString = (value) => {
+          if(value === null || value ===undefined ) return '';
+          const stringParseValue = String(value);
+          // console.log('value: ', value);
+          if(stringParseValue.length <= 15) return stringParseValue;
+          return `${stringParseValue.substring(0, 10)}...${stringParseValue.substring(
+            stringParseValue.length - 4,
+            stringParseValue.length
+            )}`;
+      }
+
+      (() => {
+          if(window.ethereum !== undefined){
+              console.log('Tiene activa la extension de metamask');
+              console.log('window.ethereum.isConnected()', window.ethereum.isConnected());
+              if(!window.ethereum.isConnected()){
+                  window.ethereum
+                  .request({ method: 'eth_requestAccounts' })
+                  .then((accounts) => {
+                      // La conexión fue exitosa, puedes acceder a las cuentas aquí
+                      console.log('Conexión exitosa. Cuentas:', accounts);
+                      withMetamask = true;
+                      return;
+                  })
+                  .catch((error) => {
+                      // La conexión fue rechazada o falló
+                      console.error('Error de conexión a MetaMask:', error);
+                      return;
+                  });
+              }
+          }
+      })();
+    </script>
+    <script type="module" src="/src/index.ts">
+      import {DicioBlockchain, DicioBlockchainAPI, dateToUint, uintToDate, getError, getAddress, 
+    tokensToNumber, numberToTokens, 
+    GweiToTokens, validate, validateAddressETH} from "./js/sdk-vite-npm.js";
       const dicioBlockchainInstance = new DicioBlockchain({abiSmartContract: AtetstationContract.abi, addressSmartContract: AtetstationContract.address, enviroment: 'prod'});
       const dicioBlockchainAPIInstance = new DicioBlockchainAPI({baseURL: 'http://122.8.178.167', port: '5116', raiz: 'api/Attestation'});
 
-      const temp = await dicioBlockchainInstance.contractRead({functionName: 'attestationsCount', params: []});
-      const attestationsCount = Number(temp.toString());
-      console.log('attestationsCount: ', attestationsCount);
-      for (let i = 1; i <= attestationsCount; i++) {
-        const element = await dicioBlockchainInstance.contractRead({functionName: 'getAttestationsByIndex', params: [i]});
-        // console.log('element: ', element);
-        const {id, evidence, timeStamp, createDate, status} = element;
-        console.log('element: ', element);
-        console.log('createDate: ', createDate);
-        console.log('createDate: ', createDate);
-        console.log('uintToDate: ', uintToDate(createDate));
-        const numberTokens = tokensToNumber(createDate, 18);
-        console.log('createDate: ', createDate, 'numberTokens: ', numberTokens);
-        const tokensNumber = numberToTokens(numberTokens, 18);
-        console.log('createDate: ', createDate, 'tokensNumber: ', tokensNumber);
-
-        const gweiTokens = GweiToTokens(numberTokens, 18);
-        console.log('createDate: ', createDate, 'gweiTokens: ', gweiTokens);
-
-        const newTokens = tokensToNumber(tokensNumber, 18);
-        console.log('createDate: ', createDate, 'newTokens: ', newTokens);
-
-        console.log('createDate: ', createDate, 'number: ', tokensToNumber(createDate, 18), 'tokens: ', numberToTokens(numberTokens, 18), 'inversa: ', parseToBigInt(numberToTokens(tokensToNumber(createDate, 18), 18)));
-        console.log(createDate === parseToBigInt(numberToTokens(tokensToNumber(createDate, 18), 18)));
-        // console.log('uintToDate: ', uintToDate(createDate));
+    document.getElementById('btn-view-attestations').addEventListener('click', async () => {
+      try {
+        if(withMetamask === false){
+        const response = await dicioBlockchainAPIInstance.contractReadAPI({endpoint: '', token: 'tokenDicio'});
+        if(response.error !== undefined){
+          console.error('ERROR: ', response.error);
+          alert(JSON.stringify(response.error) ?? 'Ocurrio un error al consultar la api');
+        }
+        console.log('response: ', response);
+        borrarBodyTabla();
+        for (let i = 0; i < response.data.length; i++) {
+          const element = response.data[i];
+          // console.log('element: ', element);
+          const {id, evidence, timeStamp, createDate, status} = element;
+          console.log('createDate: ', createDate, 'uintToDate(createDate): ', uintToDate(createDate));
+          console.log('timeStamp: ', timeStamp, 'uintToDate(timeStamp): ', uintToDate(timeStamp));
+          insertarFila(id, evidence, uintToDate(timeStamp), uintToDate(createDate), status);
+        }
+        return;
       }
+      const temp = await dicioBlockchainInstance.contractRead({functionName: 'attestationsCount', params: []});
+        const attestationsCount = Number(temp.toString());
+        console.log('attestationsCount: ', attestationsCount);
+        borrarBodyTabla();
+        for (let i = 1; i <= attestationsCount; i++) {
+          const element = await dicioBlockchainInstance.contractRead({functionName: 'getAttestationsByIndex', params: [i]});
+          // console.log('element: ', element);
+          const {id, evidence, timeStamp, createDate, status} = element;
+          console.log('createDate: ', createDate, 'uintToDate(createDate): ', uintToDate(createDate));
+          console.log('timeStamp: ', timeStamp, 'uintToDate(timeStamp): ', uintToDate(timeStamp));
+          insertarFila(id, evidence, uintToDate(timeStamp), uintToDate(createDate), status);
+        }
+        
+      } catch (error) {
+        alert(error);
+      }
+    });
+
+    document.getElementById('btn-find-attestation-by-address').addEventListener('click', async() => {
+      
+      try {
+        const address = document.getElementById('input-find-attestation-by-address').value;
+        // if(address.length <= 0 || 
+        //     !ethers.isAddress(address)){
+        //   alert('Debe de ingresar una direccion valida');
+        //   return;
+        // }
+
+        if(withMetamask === false){
+          const response = await dicioBlockchainAPIInstance.contractReadAPI({endpoint: address, token: 'tokenDicio'});
+          console.log('response: ', response);
+          if(response.error !== undefined){
+            console.log('ERROR: ', response.error);
+            alert(JSON.stringify(response.error) ?? 'Ocurrio un error al consultar la api');
+            return;
+          }
+          borrarBodyTabla();
+          for (let i = 0; i < response.data.length; i++) {
+            const element = response.data[i];
+            // console.log('element: ', element);
+            const {id, evidence, timeStamp, createDate, status} = element;
+            console.log('createDate: ', createDate, 'uintToDate(createDate): ', uintToDate(createDate));
+            console.log('timeStamp: ', timeStamp, 'uintToDate(timeStamp): ', uintToDate(timeStamp));
+            insertarFila(id, evidence, uintToDate(timeStamp), uintToDate(createDate), status);
+          }
+          return;
+        }
+        const attestationsList = await dicioBlockchainInstance.contractRead({functionName: 'getAttestationsByUser', params: [address]});
+        console.log('attestationsList: ', attestationsList);
+        console.log('antes de borrar tabla');
+        borrarBodyTabla();
+        console.log('Paso borrar tabla');
+        for (let i = 1; i <= attestationsList.length; i++) {
+          const element = await dicioBlockchainInstance.contractRead({functionName: 'getAttestationsByIndex', params: [attestationsList[i-1].toString()]});
+          // console.log('element: ', element);
+          const {id, evidence, timeStamp, createDate, status} = element;
+          console.log('createDate: ', createDate, 'uintToDate(createDate): ', uintToDate(createDate));
+          console.log('timeStamp: ', timeStamp, 'uintToDate(timeStamp): ', uintToDate(timeStamp));
+          insertarFila(id, evidence, uintToDate(timeStamp), uintToDate(createDate), status);
+        }
+        
+      } catch (error) {
+        console.log('error: ', error);
+        alert(error);
+      }
+    });
+
+    document.getElementById('btn-add-attestation').addEventListener('click', async() => {
+
+      borrarDatosTransaction();
+      const address = document.getElementById('input-add-attestation-address').value;
+      const id = document.getElementById('input-add-attestation-id').value;
+      const status = document.getElementById('input-add-attestation-status').value;
+      const value = document.getElementById('textarea-add-attestation-value').value;
+      
+      // if(address.length <= 0 || !ethers.isAddress(address)){
+      //   alert('Debe de ingresar una direccion valida');
+      //   return;
+      // }
+
+      // if(id.length <= 0 && status.length <= 0 && value.length <= 0){
+      //   alert('Debe de rellenar todos los campos');
+      //   return;
+      // }
+      const fecha = new Date();
+      const fechaBlockchain = Math.floor(fecha.getTime() / 1000);
+      try {
+
+        if(withMetamask === false){
+          const body = {
+              account: address,
+              id,
+              value,
+              timestamp: fechaBlockchain, 
+              status
+          };
+          const response = await dicioBlockchainAPIInstance.contractWriteAPI({endpoint: '', token: 'tokenDicio', data: body});
+          console.log('response: ', response);
+          if(response.error !== undefined){
+            console.log('ERROR: ', response.error);
+            alert(JSON.stringify(response.error) ?? 'Ocurrio un error al consultar la api');
+            return;
+          }
+          console.log('response: ', response);
+          const {
+            blockHash = '-', 
+            blockNumber = '-', 
+            gasPrice = '-', 
+            gasUsed  = '-', 
+            transactionHash, 
+            from = '-', 
+            to  = '-'
+          } = response.data;
+          agregarDatosTx(blockHash, blockNumber, gasPrice, gasUsed, transactionHash, from, to);
+          return;
+        }
+
+        const tx = await dicioBlockchainInstance.contractWrite({functionName: 'addAttestation', params: [address, id, value, fechaBlockchain, status]});
+        console.log('tx', tx);
+        const { blockHash, blockNumber, from, gasPrice, gasUsed, hash, to } = tx;
+        agregarDatosTx(blockHash, blockNumber, gasPrice, gasUsed, hash, from, to);
+        // alert(`tx: ${JSON.stringify(tx)}`);
+      } catch (error) {
+        console.log('error: ', error);
+        alert(error);
+      }
+      
+    });
+
+    document.getElementById('btn-connect-metamask').addEventListener('click', async() => {
+      try {
+        // Intenta conectarte a MetaMask
+        window.ethereum
+          .request({ method: 'eth_requestAccounts' })
+          .then((accounts) => {
+              // La conexión fue exitosa, puedes acceder a las cuentas aquí
+              console.log('Conexión exitosa. Cuentas:', accounts);
+              withMetamask = true;
+              return;
+          })
+          .catch((error) => {
+            // La conexión fue rechazada o falló
+            console.error('Error de conexión a MetaMask:', error);
+          });
+
+          // Intenta obtener la información de la red actual
+          window.ethereum
+            .request({ method: 'eth_chainId' })
+            .then((chainIdHex) => {
+                // Convertir el ID de cadena hexadecimal a decimal
+                const chainId = parseInt(chainIdHex, 16);
+                
+                // Comprueba si la cadena actual coincide con la red deseada (1351 en este caso)
+                if (chainId === 1351) {
+                    console.log('La cuenta conectada está en la red 1351.');
+                } else {
+                    alert('Debe de cambiar a la red de dicio');
+                }
+            })
+            .catch((error) => {
+                // La conexión fue rechazada o falló
+                console.error('Error al obtener la información de la red:', error);
+            });
+      } catch (error) {
+        console.log('error: ', error);
+        alert(error);
+      }
+    });
+
     </script>
   </body>
 </html>

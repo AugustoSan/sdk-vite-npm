@@ -6,6 +6,8 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "typeRoots": ["./node_modules/@types", "types"],
+    "rootDir": "./src",
+    "outDir": "/dist",
 
     /* Bundler mode */
     "moduleResolution": "node",
@@ -22,11 +24,11 @@
 
     /* Emit */
     "declaration": true,
+    "declarationMap": true,
     "paths": {
+      "bignumber": ["./node_modules/bignumber.js"],
       "ethers": ["./node_modules/ethers"],
-      "bignumber": ["./node_modules/bignumber.js"]
     }
   },
-  "include": ["src", "types"],
-  "exclude": ["public"]
+  "include": ["./src/**/*.ts", "types"]
 }

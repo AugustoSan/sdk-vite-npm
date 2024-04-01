@@ -1,7 +1,7 @@
 import { BrowserProvider, JsonRpcProvider, ethers } from 'ethers';
 import { ISmartContract } from './interfaces/Blockchain.interface';
-import { IDataPropsAPI, IInteractionAPIGET, IInteractionAPIPOST, IInteractionContract } from './interfaces';
 import { ContractRead, ContractWrite } from './services';
+import { IDataPropsAPI, IInteractionAPIGET, IInteractionAPIPOST, IInteractionContract } from './interfaces/Information.interface';
 
 interface IDataPropsDicioBlockchain {
     abiSmartContract: ethers.Interface | ethers.InterfaceAbi;
@@ -118,15 +118,14 @@ export class DicioBlockchainAPI {
     }
 }
 
-export { ContractRead, ContractWrite } from './services';
-export { 
-    dateToUint, uintToDate, getError, getAddress, 
-    tokensToNumber, numberToTokens,  parseToBigInt,
-    GweiToTokens, validate, validateAddressETH 
-} from "./utils";
-
 export type { 
-    IBlockchainResponse, ISmartContract, IDataResponseRead, IDataResponseWrite, 
-    IInteractionContract, IInteractionAPIGET, IInteractionAPIPOST, IDataPropsAPI,
-    ISecret 
+    IBlockchainResponse,  ISmartContract, IDataResponseRead, IDataResponseWrite, 
+    IInteractionContract, IInteractionAPIGET, IInteractionAPIPOST, IDataPropsAPI, ISecret 
 } from "./interfaces";
+
+export { ContractRead, ContractWrite } from "./services";
+
+export { 
+    dateToUint,  uintToDate,  getError, getAddress, tokensToNumber, numberToTokens, 
+    parseToBigInt, GweiToTokens, validate, validateAddressETH 
+} from "./utils";

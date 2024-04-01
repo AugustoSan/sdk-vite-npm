@@ -13,11 +13,16 @@ export default defineConfig({
     build: {
         // También podría ser un diccionario o un array de múltiples puntos de entrada
         lib: {
-            entry: resolve(__dirname, 'src/index.ts'),
+            entry: {
+                'sdk-vite-npm': resolve(__dirname, 'src/index.ts'),
+                'services': resolve(__dirname, 'src/services/index.ts'),
+                'utils': resolve(__dirname, 'src/utils/index.ts'),
+            },
             name: 'SDKViteNPM',
             // Se agregará la extension apropiada.
-            fileName: 'sdk-vite-npm',
-            formats: ['es', 'cjs', 'umd', 'iife']
+            // fileName: 'sdk-vite-npm',
+            // fileName: ((format, entryName) => `${entryName}.${format}.js`),
+            formats: ['es', 'cjs']
         },
         rollupOptions: {
             external: ['vue'],
@@ -30,9 +35,9 @@ export default defineConfig({
             },
         },
     },
-    resolve: {
-        alias: {
-          '@': resolve(__dirname, 'src'),
-        },
-    }
+    // resolve: {
+    //     alias: {
+    //       '@': resolve(__dirname, './src'),
+    //     },
+    // }
 });

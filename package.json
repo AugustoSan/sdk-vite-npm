@@ -8,12 +8,11 @@
   "repository": {
     "url": "https://github.com/AugustoSan/sdk-vite-npm.git"
   },
-  "version": "0.0.21",
+  "version": "0.0.50",
   "type": "module",
   "files": [
-    "dist/*",
-    "types/*",
-    "src/*"
+    "dist",
+    "types"
   ],
   "main": "./dist/sdk-vite-npm.umd.cjs",
   "module": "./dist/sdk-vite-npm.js",
@@ -21,7 +20,15 @@
   "exports": {
     ".": {
       "import": "./dist/sdk-vite-npm.js",
-      "require": "./dist/sdk-vite-npm.umd.cjs"
+      "require": "./dist/sdk-vite-npm.cjs"
+    },
+    "./services": {
+      "import": "./dist/services.js",
+      "require": "./dist/services.cjs"
+    },
+    "./utils": {
+      "import": "./dist/utils.js",
+      "require": "./dist/utils.cjs"
     }
   },
   "scripts": {
