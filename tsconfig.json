@@ -30,5 +30,5 @@
       "ethers": ["./node_modules/ethers"],
     }
   },
-  "include": ["./src/**/*.ts", "types"]
+  "include": ["./src/*.ts", "types"]
 }

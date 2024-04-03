@@ -8,10 +8,11 @@
   "repository": {
     "url": "https://github.com/AugustoSan/sdk-vite-npm.git"
   },
-  "version": "0.0.51",
+  "version": "0.0.56",
   "type": "module",
   "files": [
     "dist",
+    "src",
     "types"
   ],
   "main": "./dist/sdk-vite-npm.umd.cjs",
