@@ -1,132 +1,74 @@
 import { isError } from "ethers";
+import { IErrorSDK } from "../interfaces";
 
-// const erroresRoleAccess:string[] = [
-//     "{ code: 100, Message: 'No tiene permisos de root' }",
-//     "{ code: 0, Message: 'No tienes roles asignados' }",
-//     "{ code: 0, Message: 'No puede estar vacio el nombre del nuevo Rol' }",
-//     "{ code: 0, Message: 'El rol ya se encuentra registrado' }",
-//     "{ code: 0, Message: 'No puede estar vacio el permiso' }",
-//     "{ code: 0, Message: 'El rol no existe' }",
-//     "{ code: 3, Message: 'El indice ingresado no existe' }",
-//     "{ code: 1, Message: El rol ingresado no es valido }",
-//     "{ code: 2, Message: La cuenta no tiene asignado el rol }",
-// ];
+export class ErrorClassSDK extends Error {
+  group: string;
+  message: string;
+  code: string;
+  error: any;
 
-// const erroresRoleAccess:string[] = [
-//     "No tiene permisos de root",
-//     "No tienes roles asignados",
-//     "No puede estar vacio el nombre del nuevo Rol",
-//     "El rol ya se encuentra registrado",
-//     "No puede estar vacio el permiso",
-//     "El rol no existe",
-//     "El indice ingresado no existe",
-//     "El rol ingresado no es valido",
-//     "La cuenta no tiene asignado el rol",
-// ];
+  constructor({
+    group,
+    message,
+    code,
+    error
+  }: IErrorSDK){
+    super();
+    this.group = group;
+    this.message = message;
+    this.code = code;
+    this.error = error;
+  }
+}
 
-// export const getRevertMessageRoleAccess = (error: Error) :string => {
-//     let message = 'Sin mensaje registrado';
-//     let position = -1;
-//     for (let i = 0; i < erroresRoleAccess.length; i++) {
-//         if(error.message.includes(erroresRoleAccess[i])){
-//             position = i;
-//             break;
-//         }
-//     }
-//     console.log('ERROR: ', error.message);
-    
-//     return position === -1 ? message : erroresRoleAccess[position];
-// }
-
-// export const validateIsRevert = (error: Error) :boolean => {
-//     return error.message.includes('reverted');
-// }
-/**
- * 
- * if (isError(error, 'UNKNOWN_ERROR') || isError(error, 'NOT_IMPLEMENTED') || isError(error, 'UNSUPPORTED_OPERATION')
-        || isError(error, 'NETWORK_ERROR') || isError(error, 'SERVER_ERROR') || isError(error, 'TIMEOUT')
-        || isError(error, 'BAD_DATA') || isError(error, 'CANCELLED') || isError(error, 'BUFFER_OVERRUN')
-        || isError(error, 'NUMERIC_FAULT') || isError(error, 'INVALID_ARGUMENT') || isError(error, 'MISSING_ARGUMENT')
-        || isError(error, 'UNEXPECTED_ARGUMENT') || isError(error, 'VALUE_MISMATCH') || isError(error, 'CALL_EXCEPTION')
-        || isError(error, 'INSUFFICIENT_FUNDS') || isError(error, 'NONCE_EXPIRED') || isError(error, 'REPLACEMENT_UNDERPRICED')
-        || isError(error, 'TRANSACTION_REPLACED') || isError(error, 'UNCONFIGURED_NAME') || isError(error, 'OFFCHAIN_FAULT')
-        || isError(error, 'ACTION_REJECTED')
-      ) {
-        console.log('error: ', error)
-        throw Error(error.reason ?? error.message);
-      }
- * @returns 
- */
-export const getError = (error: any): Error => {
-    console.log('ERROR: ', error);
+export const getError = (error: any): ErrorClassSDK => {
+    console.log('ERROR: ', JSON.stringify(error));
     switch(error){
-      case isError(error, 'UNKNOWN_ERROR'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+      case isError(error, 'UNKNOWN_ERROR'): 
+        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.data), code: 'UNKNOWN_ERROR', error});
       case isError(error, 'NOT_IMPLEMENTED'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.operation), code: 'NOT_IMPLEMENTED', error});
       case isError(error, 'UNSUPPORTED_OPERATION'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.operation), code: 'UNSUPPORTED_OPERATION', error});
       case isError(error, 'NETWORK_ERROR'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.transaction), code: 'NETWORK_ERROR', error});
       case isError(error, 'SERVER_ERROR'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.request), code: 'SERVER_ERROR', error});
       case isError(error, 'TIMEOUT'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.reason), code: 'TIMEOUT', error});
       case isError(error, 'BAD_DATA'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.value), code: 'BAD_DATA', error});
       case isError(error, 'CANCELLED'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.shortMessage), code: 'CANCELLED', error});
       case isError(error, 'BUFFER_OVERRUN'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Operational', message: JSON.stringify(error.shortMessage), code: 'BUFFER_OVERRUN', error});
       case isError(error, 'NUMERIC_FAULT'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Operational', message: JSON.stringify(error.fault), code: 'NUMERIC_FAULT', error});
       case isError(error, 'INVALID_ARGUMENT'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'INVALID_ARGUMENT', error});
       case isError(error, 'MISSING_ARGUMENT'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'MISSING_ARGUMENT', error});
       case isError(error, 'UNEXPECTED_ARGUMENT'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'UNEXPECTED_ARGUMENT', error});
       case isError(error, 'VALUE_MISMATCH'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'VALUE_MISMATCH', error});
       case isError(error, 'CALL_EXCEPTION'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Blockchain', message: error.reason !== null ? error.reason : error.revert !== null ? JSON.stringify(error.revert) : error.shortMessage, code: 'CALL_EXCEPTION', error});
       case isError(error, 'INSUFFICIENT_FUNDS'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'INSUFFICIENT_FUNDS', error});
       case isError(error, 'NONCE_EXPIRED'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'NONCE_EXPIRED', error});
       case isError(error, 'REPLACEMENT_UNDERPRICED'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'REPLACEMENT_UNDERPRICED', error});
       case isError(error, 'TRANSACTION_REPLACED'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'TRANSACTION_REPLACED', error});
       case isError(error, 'UNCONFIGURED_NAME'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Blockchain', message: error.value, code: 'UNCONFIGURED_NAME', error});
       case isError(error, 'OFFCHAIN_FAULT'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'OFFCHAIN_FAULT', error});
       case isError(error, 'ACTION_REJECTED'):
-        console.log('Error: ', error);
-        return new Error(error.info.error.data.reason);
+        return new ErrorClassSDK({group: 'User Interaction', message: JSON.stringify(error.shortMessage), code: 'ACTION_REJECTED', error});
       default: 
-        return error;
+        return new ErrorClassSDK({group: 'DEFAULT', message: JSON.stringify(error.shortMessage), code: 'DEFAULT', error});
     }
 }
