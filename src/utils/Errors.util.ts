@@ -84,53 +84,52 @@ export class ErrorClassSDK extends Error {
 
 export const getError = (error: any): ErrorClassSDK => {
   try {
-    switch(error){
-      case isError(error, 'UNKNOWN_ERROR'): 
-        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.data), code: 'UNKNOWN_ERROR', error: error as UnknownError});
-      case isError(error, 'NOT_IMPLEMENTED'):
-        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.operation), code: 'NOT_IMPLEMENTED', error: error as NotImplementedError});
-      case isError(error, 'UNSUPPORTED_OPERATION'):
-        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.operation), code: 'UNSUPPORTED_OPERATION', error: error as UnsupportedOperationError});
-      case isError(error, 'NETWORK_ERROR'):
-        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.transaction), code: 'NETWORK_ERROR', error: error as NetworkError});
-      case isError(error, 'SERVER_ERROR'):
-        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.request), code: 'SERVER_ERROR', error: error as ServerError});
-      case isError(error, 'TIMEOUT'):
-        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.reason), code: 'TIMEOUT', error: error as TimeoutError});
-      case isError(error, 'BAD_DATA'):
-        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.value), code: 'BAD_DATA', error: error as BadDataError});
-      case isError(error, 'CANCELLED'):
-        return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.shortMessage), code: 'CANCELLED', error: error as CancelledError});
-      case isError(error, 'BUFFER_OVERRUN'):
-        return new ErrorClassSDK({group: 'Operational', message: JSON.stringify(error.shortMessage), code: 'BUFFER_OVERRUN', error: error as BufferOverrunError});
-      case isError(error, 'NUMERIC_FAULT'):
-        return new ErrorClassSDK({group: 'Operational', message: JSON.stringify(error.fault), code: 'NUMERIC_FAULT', error: error as NumericFaultError});
-      case isError(error, 'INVALID_ARGUMENT'):
-        return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'INVALID_ARGUMENT', error: error as InvalidArgumentError});
-      case isError(error, 'MISSING_ARGUMENT'):
-        return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'MISSING_ARGUMENT', error: error as MissingArgumentError});
-      case isError(error, 'UNEXPECTED_ARGUMENT'):
-        return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'UNEXPECTED_ARGUMENT', error: error as UnexpectedArgumentError});
-      case isError(error, 'VALUE_MISMATCH'):
-        return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'VALUE_MISMATCH', error: error as Error});
-      case isError(error, 'CALL_EXCEPTION'):
-        return new ErrorClassSDK({group: 'Blockchain', message: error.reason !== null ? error.reason : error.revert !== null ? JSON.stringify(error.revert) : error.shortMessage, code: 'CALL_EXCEPTION', error: error as CallExceptionError});
-      case isError(error, 'INSUFFICIENT_FUNDS'):
-        return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'INSUFFICIENT_FUNDS', error: error as InsufficientFundsError});
-      case isError(error, 'NONCE_EXPIRED'):
-        return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'NONCE_EXPIRED', error: error as NonceExpiredError});
-      case isError(error, 'REPLACEMENT_UNDERPRICED'):
-        return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'REPLACEMENT_UNDERPRICED', error: error as ReplacementUnderpricedError});
-      case isError(error, 'TRANSACTION_REPLACED'):
-        return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'TRANSACTION_REPLACED', error: error as TransactionReplacedError});
-      case isError(error, 'UNCONFIGURED_NAME'):
-        return new ErrorClassSDK({group: 'Blockchain', message: error.value, code: 'UNCONFIGURED_NAME', error: error as UnconfiguredNameError});
-      case isError(error, 'OFFCHAIN_FAULT'):
-        return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'OFFCHAIN_FAULT', error: error as OffchainFaultError});
-      case isError(error, 'ACTION_REJECTED'):
-        return new ErrorClassSDK({group: 'User Interaction', message: JSON.stringify(error.shortMessage), code: 'ACTION_REJECTED', error: error as ActionRejectedError});
-      default: 
-        return new ErrorClassSDK({group: 'DEFAULT', message: JSON.stringify(error.shortMessage), code: 'DEFAULT', error: error as Error});
+    if(isError(error, 'UNKNOWN_ERROR')){ 
+      return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.data), code: 'UNKNOWN_ERROR', error: error as UnknownError});
+    } else if(isError(error, 'NOT_IMPLEMENTED')){
+      return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.operation), code: 'NOT_IMPLEMENTED', error: error as NotImplementedError});
+    } else if(isError(error, 'UNSUPPORTED_OPERATION')){
+      return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.operation), code: 'UNSUPPORTED_OPERATION', error: error as UnsupportedOperationError});
+    } else if(isError(error, 'NETWORK_ERROR')){
+      return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.event), code: 'NETWORK_ERROR', error: error as NetworkError});
+    } else if(isError(error, 'SERVER_ERROR')){
+      return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.request), code: 'SERVER_ERROR', error: error as ServerError});
+    } else if(isError(error, 'TIMEOUT')){
+      return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.reason), code: 'TIMEOUT', error: error as TimeoutError});
+    } else if(isError(error, 'BAD_DATA')){
+      return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.value), code: 'BAD_DATA', error: error as BadDataError});
+    } else if(isError(error, 'CANCELLED')){
+      return new ErrorClassSDK({group: 'Generic', message: JSON.stringify(error.shortMessage), code: 'CANCELLED', error: error as CancelledError});
+    } else if(isError(error, 'BUFFER_OVERRUN')){
+      return new ErrorClassSDK({group: 'Operational', message: JSON.stringify(error.shortMessage), code: 'BUFFER_OVERRUN', error: error as BufferOverrunError});
+    } else if(isError(error, 'NUMERIC_FAULT')){
+      return new ErrorClassSDK({group: 'Operational', message: JSON.stringify(error.fault), code: 'NUMERIC_FAULT', error: error as NumericFaultError});
+    } else if(isError(error, 'INVALID_ARGUMENT')){
+      return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'INVALID_ARGUMENT', error: error as InvalidArgumentError});
+    } else if(isError(error, 'MISSING_ARGUMENT')){
+      return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'MISSING_ARGUMENT', error: error as MissingArgumentError});
+    } else if(isError(error, 'UNEXPECTED_ARGUMENT')){
+      return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error.shortMessage), code: 'UNEXPECTED_ARGUMENT', error: error as UnexpectedArgumentError});
+    } else if(isError(error, 'VALUE_MISMATCH')){
+      return new ErrorClassSDK({group: 'Argument', message: JSON.stringify(error), code: 'VALUE_MISMATCH', error: error as Error});
+    } else if(isError(error, 'CALL_EXCEPTION')){
+      return new ErrorClassSDK({group: 'Blockchain', message: error.reason !== null ? error.reason : error.revert !== null ? JSON.stringify(error.revert) : error.shortMessage, code: 'CALL_EXCEPTION', error: error as CallExceptionError});
+    } else if(isError(error, 'INSUFFICIENT_FUNDS')){
+      return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'INSUFFICIENT_FUNDS', error: error as InsufficientFundsError});
+    } else if(isError(error, 'NONCE_EXPIRED')){
+      return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'NONCE_EXPIRED', error: error as NonceExpiredError});
+    } else if(isError(error, 'REPLACEMENT_UNDERPRICED')){
+      return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'REPLACEMENT_UNDERPRICED', error: error as ReplacementUnderpricedError});
+    } else if(isError(error, 'TRANSACTION_REPLACED')){
+      return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'TRANSACTION_REPLACED', error: error as TransactionReplacedError});
+    } else if(isError(error, 'UNCONFIGURED_NAME')){
+      return new ErrorClassSDK({group: 'Blockchain', message: error.value, code: 'UNCONFIGURED_NAME', error: error as UnconfiguredNameError});
+    } else if(isError(error, 'OFFCHAIN_FAULT')){
+      return new ErrorClassSDK({group: 'Blockchain', message: JSON.stringify(error.shortMessage), code: 'OFFCHAIN_FAULT', error: error as OffchainFaultError});
+    } else if(isError(error, 'ACTION_REJECTED')){
+      return new ErrorClassSDK({group: 'User Interaction', message: JSON.stringify(error.shortMessage), code: 'ACTION_REJECTED', error: error as ActionRejectedError});
+    } else {
+      return new ErrorClassSDK({group: 'DEFAULT', message: JSON.stringify(error.shortMessage), code: 'DEFAULT', error: error as Error});
     }
   } catch (error) {
     return new ErrorClassSDK({group: 'CATCH', message: 'Ocurrio un error al intentar buscar el error.', code: 'DEFAULT', error: error as Error});
