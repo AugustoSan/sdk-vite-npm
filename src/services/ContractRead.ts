@@ -17,7 +17,6 @@ export const ContractRead = async ({
   signer,
 }: IDataProps): Promise<Result | Error> => {
   try {
-    console.log('Entro en ContractRead');
     const contract = new ethers.Contract(
       smartContract.address,
       smartContract.abi,

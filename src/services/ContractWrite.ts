@@ -15,7 +15,6 @@ export const ContractWrite = async ({
   smartContract,
   signer
 }: IDataProps): Promise<TransactionReceipt | Error> => {
-  console.log('Entro en ContractWrite');
   try {
     const contract = new ethers.Contract(
       smartContract.address,
@@ -24,7 +23,6 @@ export const ContractWrite = async ({
     );
     let response: TransactionReceipt;
     if (typeof contract[functionName] === 'function') {
-      console.log(`functionName: ${functionName}  parameters: ${parameters}  length: ${parameters.length}`);
       const tx = await contract[functionName](...parameters);
       response = await tx?.wait(1);
       if(response.status == 1) return response;
